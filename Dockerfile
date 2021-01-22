@@ -4,7 +4,7 @@ RUN apt-get update && apt-get install libcurl4-openssl-dev libv8-3.14-dev -y &&\
     mkdir -p /var/lib/shiny-server/bookmarks/shiny
 
 # Download and install library
-RUN R -e "install.packages(c('shinydashboard', 'data.table', 'plotly', 'gargle', 'googlesheets4'))"
+RUN R -e "install.packages(c('shiny','shinydashboard', 'data.table', 'plotly', 'gargle', 'googlesheets4'), repos='https://cloud.r-project.org/')"
 
 # copy the app to the image
 COPY app /root/app
