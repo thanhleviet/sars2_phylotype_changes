@@ -16,4 +16,4 @@ RUN chmod -R 755 /usr/local/lib/R/etc
 
 EXPOSE 3838
 
-CMD ["R", "-e", "shiny::runApp('/root/app')"]
+CMD ["R", "-e", "shiny::runApp(appDir = '/root/app', host = "127.0.0.1", port = "3838")"]
