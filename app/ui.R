@@ -10,6 +10,7 @@
 library(shiny)
 library(plotly)
 library(shinydashboard)
+library(shinyWidgets)
 
 dashboardPage(
     dashboardHeader(title = "SARS2 NORW"),
@@ -28,7 +29,7 @@ dashboardPage(
     ),
     dashboardBody(
         fluidRow(
-            box(status = "warning", title = "Cummulative sequences for each phylotype by collection date", width = 8, height = plotly_height + 55, plotlyOutput("cumsum_phylotype")),
+            box(status = "warning", title = "Cummulative sequences for each phylotype by collection date", width = 8, height = plotly_height + 55, addSpinner(plotlyOutput("cumsum_phylotype"), spin = "circle", color = "#E41A1C")),
             fluidRow(
                 box(status = "info", width = 4, plotlyOutput("spike"), height = (plotly_height + 55)/2),
                 box(status = "success", width = 4, plotOutput("collecting_org"), height = (plotly_height + 40)/2)
