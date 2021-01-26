@@ -1,4 +1,5 @@
 library(readr)
+library(dplyr)
 library(data.table)
 library(gargle)
 library(googlesheets4)
@@ -9,10 +10,10 @@ start_time <- Sys.time()
 master_table <- read_sheet(url)
 end_time <- Sys.time()
 end_time - start_time
-saveRDS(master_table, "data/master_metadata.rds")
+saveRDS(master_table, "app/data/master_metadata.rds")
 
 #Join variants file with master metadata, fix collecting_org incosistence then.
-aa_data <- fread("data/combined_aa.csv") %>% 
+aa_data <- fread("app/data/combined_aa.csv") %>% 
   left_join(., master_table %>% select(central_sample_id, collecting_org)) %>% 
   mutate(collecting_org = toupper(collecting_org)) %>% 
   mutate(collecting_org = case_when(
@@ -41,5 +42,5 @@ HERTFORDSHIRE <- master_table %>%
 nextclade <- fread("data/nextclade.csv")
 
 
-saveRDS(aa_data, "data/data.rds")
+saveRDS(aa_data, "app/data/data.rds")
 

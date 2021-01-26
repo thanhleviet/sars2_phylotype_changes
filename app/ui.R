@@ -15,7 +15,7 @@ library(shinyWidgets)
 dashboardPage(
     dashboardHeader(title = "SARS2 NORW"),
     dashboardSidebar(
-        dateInput("inDate", "Sequences collected from:", "2020-10-01"),
+        dateInput("inDate", "Sequences collected from:", "2020-12-01"),
         
         sliderInput("days",
                     "Exclude sequences collected within (days):",
@@ -23,7 +23,7 @@ dashboardPage(
                     max = 30,
                     value = 7,
                     step = 1),
-        
+        selectizeInput('collecting_org', 'Select collecting org', choices = collecting_org, multiple = TRUE),
         selectizeInput('phy', 'Select (multiple) top phylotypes', choices = phylotypes, multiple = TRUE)
         
     ),

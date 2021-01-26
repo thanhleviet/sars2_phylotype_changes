@@ -18,7 +18,7 @@ spike <- aa_changes %>%
 input_data <- aa_changes %>%
   filter(!is.na(phylotype)) %>%
   mutate(phylotype = paste0(lineage,"-",phylotype)) %>%
-  group_by(phylotype, sample_date) %>%
+  group_by(phylotype, collecting_org, sample_date) %>%
   summarise(count = n()) %>%
   ungroup() %>%
   arrange(sample_date) %>%
@@ -33,7 +33,12 @@ phylotypes <- input_data %>%
   arrange(desc(count)) %>% 
   pull(phylotype)
 
-
+#Collecting org
+# 
+# collecting_org <- aa_changes %>% 
+#   distinct(collecting_org) %>% 
+#   pull(collecting_org) %>% 
+#   sort()
 # spike <- aa_changes %>%
 #   group_by(phylotype, sample_date, variants) %>% 
 #   summarise(count = n()) %>% 

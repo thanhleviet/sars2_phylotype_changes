@@ -18,22 +18,53 @@ source("global.r")
 shinyServer(function(input, output, session) {
     data <- reactive({
         phy <- input$phy
+
+        qry_data <- aa_changes  %>% 
+            dplyr::filter(sample_date >= input$inDate)
+        
+        collecting_org <- qry_data %>%
+            distinct(collecting_org) %>%
+            pull(collecting_org) %>%
+            sort()
+        
+        if (is.vector(input$collecting_org)) {
+            qry_data <- qry_data %>% 
+                dplyr::filter(collecting_org %in% input$collecting_org)
+            
+            collecting_org <- qry_data %>%
+                distinct(collecting_org) %>%
+                pull(collecting_org) %>%
+                sort()
+        }
+        
+        qry_data <- qry_data %>%
+            filter(!is.na(phylotype)) %>%
+            mutate(phylotype = paste0(lineage,"-",phylotype)) %>%
+            group_by(phylotype, sample_date) %>%
+            summarise(count = n()) %>%
+            ungroup() %>%
+            arrange(sample_date) %>%
+            group_by(phylotype) %>%
+            mutate(cumsum = cumsum(count)) %>%
+            mutate(days = n())
+        
         if (is.vector(phy)) {
-            .rs <- input_data %>%
-                filter(sample_date >= input$inDate) %>%
+            qry_data <- qry_data %>%
                 filter(days >= input$days) %>%
                 filter(phylotype %in% input$phy)
         } else {
-            .rs <- input_data %>%
+            qry_data <- qry_data %>%
                 filter(sample_date >= input$inDate) %>%
                 filter(days >= input$days)
         }
-        filtered_phylotype <- unique(.rs)$phylotype
-        return(list(data=.rs, phylotype=filtered_phylotype))
+        
+        filtered_phylotype <- unique(qry_data)$phylotype
+        
+        return(list(data=qry_data, phylotype=filtered_phylotype, collecting_org = collecting_org))
     })
     
     observeEvent(input$days, {
-        phylotypes_update_server <- input_data %>%
+        phylotypes_update_server <- data()$data %>%
             filter(days >= input$days) %>%
             group_by(phylotype) %>%
             summarise(count = n()) %>%
@@ -42,7 +73,19 @@ shinyServer(function(input, output, session) {
         updateSelectizeInput(session, "phy", choices = phylotypes_update_server, server = TRUE)
     })
     
+    observeEvent(input$inDate, {
+        collecting_org <- aa_changes  %>%
+            filter(sample_date >= input$inDate) %>%
+            distinct(collecting_org) %>%
+            pull(collecting_org) %>%
+            sort()
+        updateSelectizeInput(session, "collecting_org", choices = collecting_org, server = TRUE)
+    })
+    
     output$cumsum_phylotype <- renderPlotly({
+        validate(
+            need(nrow(data()$data) > 0, "No data available for current filters")
+        )
         p <- ggplot(data()$data, aes(x = sample_date, y = cumsum, color = phylotype, group=days)) +
             geom_line() +
             geom_point() +
@@ -82,10 +125,13 @@ shinyServer(function(input, output, session) {
     
     output$collecting_org <- renderPlot({
         phylotype_collecting_org <- phylotype_collecting_org %>% 
-            select(phylotype, collecting_org) %>% 
+            dplyr::filter(collecting_org %in% data()$collecting_org) %>% 
             dplyr::filter(phylotype %in% data()$phylotype) %>%
+            select(phylotype, collecting_org) %>% 
             group_by(phylotype, collecting_org) %>% 
             summarise(count = n())
+        # print(unique(phylotype_collecting_org$collecting_org))
+        # print(table(phylotype_collecting_org$collecting_org, phylotype_collecting_org$phylotype))
         ggplot(data = phylotype_collecting_org, aes(x = collecting_org, y = count)) +
             geom_bar(stat = "identity", aes(fill = collecting_org), show.legend = F) +
             labs(x = "Collecting Org", y = "No of Sequences") +
