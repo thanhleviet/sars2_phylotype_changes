@@ -112,7 +112,7 @@ shinyServer(function(input, output, session) {
             group_by(variants) %>% 
             summarise(count = n()) %>% 
             arrange(desc(count)) %>% 
-            filter(count > 5)
+            filter(count > 0)
         
         plot_ly(filtered_data, height = (plotly_height)/2) %>% 
             add_bars(y = ~reorder(variants, desc(count)),

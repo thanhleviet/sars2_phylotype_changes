@@ -1,1 +1,1 @@
-docker build -t sars .
+docker build -t sars2 .
