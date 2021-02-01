@@ -112,7 +112,7 @@ shinyServer(function(input, output, session) {
         p <- ggplot(weekly_data, aes(x = epi_week, y = count, fill = phylotype)) +
             geom_bar(position = "stack", stat = "identity") +
             xlab("Epi week") +
-            ylab("Cum sum of sequences") +
+            ylab("Number of sequences") +
             # scale_x_date(date_breaks = "1 week", date_labels = "%y/%m/%d") +
             # scale_y_continuous(position = "right") +
             theme_minimal() + 
