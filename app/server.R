@@ -46,7 +46,8 @@ shinyServer(function(input, output, session) {
             arrange(sample_date) %>%
             group_by(phylotype) %>%
             mutate(cumsum = cumsum(count)) %>%
-            mutate(days = n())
+            mutate(days = n()) %>% 
+            mutate(epi_week = paste0(lubridate::year(sample_date),"/",lubridate::epiweek(sample_date)))
         
         if (is.vector(phy)) {
             qry_data <- qry_data %>%
@@ -59,7 +60,7 @@ shinyServer(function(input, output, session) {
         }
         
         filtered_phylotype <- unique(qry_data)$phylotype
-        
+        # print(head(qry_data))
         return(list(data=qry_data, phylotype=filtered_phylotype, collecting_org = collecting_org))
     })
     
@@ -100,6 +101,28 @@ shinyServer(function(input, output, session) {
         
     })
     
+    
+    output$weekly_phylotype <- renderPlotly({
+        validate(
+            need(nrow(data()$data) > 0, "No data available for current filters")
+        )
+        weekly_data <- data()$data %>% 
+            group_by(phylotype, epi_week) %>% 
+            summarise(count = n())
+        p <- ggplot(weekly_data, aes(x = epi_week, y = count, fill = phylotype)) +
+            geom_bar(position = "stack", stat = "identity") +
+            xlab("Epi week") +
+            ylab("Cum sum of sequences") +
+            # scale_x_date(date_breaks = "1 week", date_labels = "%y/%m/%d") +
+            # scale_y_continuous(position = "right") +
+            theme_minimal() + 
+            theme(axis.text.x = element_text(angle = 90))
+        ggplotly(p, height = plotly_height)
+        # ggplotly(p)
+        
+    })
+    
+    
     output$spike <- renderPlotly({
         
         filtered_data <- spike %>%
@@ -112,7 +135,7 @@ shinyServer(function(input, output, session) {
             group_by(variants) %>% 
             summarise(count = n()) %>% 
             arrange(desc(count)) %>% 
-            filter(count > 5)
+            filter(count > 0)
         
         plot_ly(filtered_data, height = (plotly_height)/2) %>% 
             add_bars(y = ~reorder(variants, desc(count)),

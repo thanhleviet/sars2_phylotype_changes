@@ -29,7 +29,12 @@ dashboardPage(
     ),
     dashboardBody(
         fluidRow(
-            box(status = "warning", title = "Cummulative sequences for each phylotype by collection date", width = 8, height = plotly_height + 55, addSpinner(plotlyOutput("cumsum_phylotype"), spin = "circle", color = "#E41A1C")),
+            tabBox(title = "Plots",
+                   id = "tabset1", height = plotly_height + 55, width = 8,
+                   tabPanel("Cummulative sequences for each phylotype by collection date", addSpinner(plotlyOutput("cumsum_phylotype"), spin = "circle", color = "#E41A1C")),
+                   tabPanel("Number of collected sequences by phylotype per week", addSpinner(plotlyOutput("weekly_phylotype"), spin = "circle", color = "#E41A1C"))
+                # status = "warning", title = "Cummulative sequences for each phylotype by collection date", width = 8, height = plotly_height + 50, addSpinner(plotlyOutput("cumsum_phylotype"), spin = "circle", color = "#E41A1C")
+                ),
             fluidRow(
                 box(status = "info", width = 4, plotlyOutput("spike"), height = (plotly_height + 55)/2),
                 box(status = "success", width = 4, plotOutput("collecting_org"), height = (plotly_height + 40)/2)
