@@ -1,4 +1,4 @@
-From openanalytics/r-base
+From openanalytics/r-base AS shiny-base
 
 RUN apt-get update && apt-get install -y \
     sudo \
@@ -13,17 +13,18 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Download and install library
-RUN R -e "install.packages(c('shiny',
-                             'shinydashboard',
-                             'shinyWidgets',
-                             'data.table',
-                             'plotly',
-                             'vroom',
-                             'gargle',
-                             'googlesheets4',
-                             'tidyverse'),
+RUN R -e "install.packages(c('shiny', \
+                             'shinydashboard', \
+                             'shinyWidgets', \
+                             'data.table', \
+                             'plotly', \
+                             'vroom', \
+                             'gargle', \
+                             'googlesheets4', \
+                             'tidyverse'), \
                              repos='https://cloud.r-project.org/')"
 
+FROM shiny-base as sars2
 # copy the app to the image
 COPY app /app
 COPY Rprofile.site /usr/lib/R/etc/
