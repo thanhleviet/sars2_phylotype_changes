@@ -19,7 +19,7 @@ dashboardPage(
         
         sliderInput("days",
                     "Exclude sequences collected within (days):",
-                    min = 2,
+                    min = 0,
                     max = 30,
                     value = 7,
                     step = 1),
