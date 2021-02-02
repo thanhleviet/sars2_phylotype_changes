@@ -62,9 +62,7 @@ shinyServer(function(input, output, session) {
         filtered_phylotype <- unique(qry_data)$phylotype
         # print(head(qry_data))
         return(list(data=qry_data, phylotype=filtered_phylotype, collecting_org = collecting_org))
-    }) %>% 
-        bindCache(input$inDate)
-    
+    }) 
     observeEvent(input$days, {
         phylotypes_update_server <- data()$data %>%
             filter(days >= input$days) %>%
