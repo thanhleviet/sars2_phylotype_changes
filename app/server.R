@@ -46,8 +46,8 @@ shinyServer(function(input, output, session) {
             arrange(sample_date) %>%
             group_by(phylotype) %>%
             mutate(cumsum = cumsum(count)) %>%
-            mutate(days = n()) %>% 
-            mutate(epi_week = paste0(lubridate::year(sample_date),"/",lubridate::epiweek(sample_date)))
+            mutate(days = n(), epi_week = lubridate::epiweek(sample_date), year = lubridate::year(sample_date)) %>% 
+            mutate(epi_week = if_else(epi_week == 53,paste0("2020/",epi_week),paste0(year,"/",epi_week))) #To find better way for the week 53
         
         if (is.vector(phy)) {
             qry_data <- qry_data %>%
@@ -62,7 +62,8 @@ shinyServer(function(input, output, session) {
         filtered_phylotype <- unique(qry_data)$phylotype
         # print(head(qry_data))
         return(list(data=qry_data, phylotype=filtered_phylotype, collecting_org = collecting_org))
-    })
+    }) %>% 
+        bindCache(input$inDate)
     
     observeEvent(input$days, {
         phylotypes_update_server <- data()$data %>%
