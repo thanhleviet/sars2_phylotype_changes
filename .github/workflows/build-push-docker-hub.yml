@@ -3,6 +3,8 @@ name: build-push-docker-hub
 on:
   push:
     branches: master
+    paths:
+      - '!README.md'
 
 jobs:
   main:
