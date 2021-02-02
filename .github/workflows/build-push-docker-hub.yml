@@ -5,6 +5,7 @@ on:
     branches: master
     paths:
       - '!README.md'
+      - '!app/data/*.*'
 
 jobs:
   main:
