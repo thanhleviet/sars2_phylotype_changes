@@ -1,5 +1,9 @@
 From openanalytics/r-base AS shiny-base
 
+LABEL maintainer="Thanh Le Viet"
+LABEL version="1.0"
+LABEL description="Dockerfile for deploying rshiny app"
+
 RUN apt-get update && apt-get install -y \
     sudo \
     pandoc \
