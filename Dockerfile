@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y \
 RUN R -e "install.packages(c('shiny', \
                              'shinydashboard', \
                              'shinyWidgets', \
+                             'bslib', \
                              'data.table', \
                              'plotly', \
                              'vroom', \
