@@ -8,4 +8,6 @@ Launch the app with shinyproxy
 sudo java -jar ./shinyproxy-3.0.2.jar
 ```
 
-![build-push-docker-hub](https://github.com/thanhleviet/sars2_phylotype_changes/workflows/build-push-docker-hub/badge.svg)
+## How does it look like?
+
+![](images/screen.png)
